@@ -1,0 +1,6 @@
+module Pods_SpotifyAnalyzer {
+  umbrella header "Pods-SpotifyAnalyzer-umbrella.h"
+
+  export *
+  module * { export * }
+}
