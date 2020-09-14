@@ -104,6 +104,9 @@ class AuthorizationClass: NSObject, SPTSessionManagerDelegate, SPTAppRemoteDeleg
             print(token)
             
             AuthInfo.token = token
+
+            
+            NotificationCenter.default.post(name: NSNotification.Name(rawValue: "GotTheToken"), object: nil)
         }
         
         print("++++++++++++++++++++++++++++++++++++++++++++++++++++++++")

@@ -5,5 +5,6 @@ target 'SpotifyAnalyzer' do
 
 	pod 'Then'
 	pod "TinyConstraints"
+	pod "Alamofire"
 
 end

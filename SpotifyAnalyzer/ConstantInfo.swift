@@ -16,6 +16,6 @@ struct ConstantInfo {
 
 struct AuthInfo {
     
-    static var token = ""
+    static var token = "BQCUE_iexf15AcpRpfW5J48Kn0e66AYIcOb1oOiVtIjD4KPd4KOHrip0AcLCB-hACypfYCAmA9o4vWuVjrpa-lIprtv6bF7Boln-2moNJ7zM0rXu6ss1HaC9gUk0uMy1E2cmRSJJzhOD4WSpg43c-UAlNW2SviLmjfnpBEzwx7Hfu15POnOzog"
     
 }
