@@ -18,27 +18,30 @@ class PlaylistsTableViewController: UITableViewController {
         print("----------------------------------------------------------------")
         
         
-        tableView.rowHeight = UITableView.automaticDimension
-        tableView.estimatedRowHeight = 100
+        //tableView.rowHeight = 100
+        // tableView.estimatedRowHeight = 100
         
         self.tableView.register(PlaylistTableViewCell.self, forCellReuseIdentifier: "playlistCell")
         self.view.backgroundColor = UIColor(red: 18/255, green: 18/255, blue: 18/255, alpha: 1.0)
         self.tableView.separatorStyle = UITableViewCell.SeparatorStyle.none
-                
+              
+        
+
         if playlistStore.items.count == 0 {
-          print("Loading podcast feed for the first time")
-          playlistStore.refreshItems{ didLoadNewItems in
-            if (didLoadNewItems) {
-              DispatchQueue.main.async {
-                
-                print("update")
-                
-                self.tableView.reloadData()
-              }
+            print("Loading podcast feed for the first time")
+        }
+        
+        playlistStore.refreshItems{ didLoadNewItems in
+          if (didLoadNewItems) {
+            DispatchQueue.main.async {
+              
+              print("update")
+              
+              self.tableView.reloadData()
             }
-            else{
-                print("NO")
-            }
+          }
+          else{
+              print("NO")
           }
         }
         
@@ -59,12 +62,15 @@ class PlaylistsTableViewController: UITableViewController {
         // #warning Incomplete implementation, return the number of rows
         return playlistStore.items.count
     }
+    
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+       return  UITableView.automaticDimension// 100
+    }
 
    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "playlistCell", for: indexPath) as! PlaylistTableViewCell
-        
-        
+
         cell.initCell(playlist: playlistStore.items[indexPath.row])
         
         return cell

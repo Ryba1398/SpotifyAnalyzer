@@ -18,20 +18,27 @@ class PlaylistLoader {
 
     static func loadFeed(_ completion: @escaping ([Item]) -> ()) {
         
-      guard let url = URL(string: FeedURL) else { return }
+        guard URL(string: FeedURL) != nil else { return }
 
         
-        request(FeedURL, method: .get, headers: ["Authorization": "Bearer \(AuthInfo.token)"]).responseJSON { response in
+        print("LOAD")
+        
+        request(FeedURL, method: .get, headers: ["Authorization": "Bearer \(AuthInfo.accessToken!)"]).responseJSON { response in
             do {
+                
+                 print("before before before before")
                 
                  let jsonData = response.data!
                 
                 let otvet = try JSONDecoder().decode(Playlists.self, from: jsonData)
                 
+                print("before")
+                
                 for item in otvet.items{
                     print(item.name)
                 }
                 
+                 print("after")
                 
                 completion(otvet.items)
                 

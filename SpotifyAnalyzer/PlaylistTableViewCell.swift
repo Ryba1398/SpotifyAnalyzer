@@ -14,7 +14,7 @@ import  Alamofire
 class PlaylistTableViewCell: UITableViewCell {
 
     let playlistCoverImage = UIImageView().then {
-        $0.image = #imageLiteral(resourceName: "Дизайн без названия")
+        $0.image = .checkmark
     }
     
     let playlistNameLabel = UILabel().then {
@@ -31,62 +31,61 @@ class PlaylistTableViewCell: UITableViewCell {
         
     }
     
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        
+        SetConstraints()
+     }
+
+     required init?(coder aDecoder: NSCoder) {
+       super.init(coder: aDecoder)
+    }
+    
+    private func SetConstraints(){
+            backgroundColor = UIColor(red: 18/255, green: 18/255, blue: 18/255, alpha: 1.0)
+        
+            contentView.addSubview(playlistCoverImage)
+            contentView.addSubview(playlistNameLabel)
+            contentView.addSubview(playlistAuthorLabel)
+
+            playlistCoverImage.top(to: self.contentView, offset: 10)
+            playlistCoverImage.bottom(to: self.contentView, offset: -10)
+            playlistCoverImage.left(to: contentView, offset: 15)
+            playlistCoverImage.height(80)
+            playlistCoverImage.aspectRatio(1)
+            
+            playlistNameLabel.centerY(to: self.contentView, offset: -12)
+            playlistNameLabel.leftToRight(of: playlistCoverImage, offset: 10)
+
+            playlistAuthorLabel.centerY(to: self.contentView, offset: 12)
+            playlistAuthorLabel.leftToRight(of: playlistCoverImage, offset: 10)
+    }
+    
     public func initCell(playlist: Item) {
-        
-        print("initializing playlist's cell")
-        
-        //contentView.translatesAutoresizingMaskIntoConstraints = true
-        
-        
-        backgroundColor = UIColor(red: 18/255, green: 18/255, blue: 18/255, alpha: 1.0)
-        
-        
-        contentView.height(100 )
-        
-        contentView.addSubview(playlistCoverImage)
-        contentView.addSubview(playlistNameLabel)
-        contentView.addSubview(playlistAuthorLabel)
-        
-        //playlistCoverImage.centerY(to: self.contentView)
-        
-        playlistCoverImage.top(to: contentView, offset: 10)
-        playlistCoverImage.left(to: contentView, offset: 15)
-        playlistCoverImage.height(80)
-        playlistCoverImage.width(80)
-        
-        playlistNameLabel.top(to: contentView, offset:  contentView.frame.height - 12)
-        playlistNameLabel.leftToRight(of: playlistCoverImage, offset: 10)
-        
-        playlistAuthorLabel.top(to: contentView, offset: contentView.frame.height + 12)
-        playlistAuthorLabel.leftToRight(of: playlistCoverImage, offset: 10)
-        
-        
         playlistNameLabel.text = playlist.name
         playlistAuthorLabel.text = "\(playlist.tracks.total) треков"
-        
+
         if(playlist.images.count != 0){
             let imageHref = playlist.images[0].url
-            
-            guard let url = URL(string: imageHref) else { return }
 
-              
+            guard let url = URL(string: imageHref) else { return }
+            
             request(url, method: .get, headers: nil).responseJSON { response in
                   do {
 
+                    
+                    
+                    print(url)
+                    
                     DispatchQueue.main.async() { [weak self] in
                         self?.playlistCoverImage.image = UIImage(data: response.data!)
                     }
-                    
+
                    } catch {
-                       
+
                        print(error.localizedDescription)
                    }
               }
-            
-           
         }
-        
-
-
     }
 }

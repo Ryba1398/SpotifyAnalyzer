@@ -10,12 +10,31 @@ import Foundation
 
 struct ConstantInfo {
     static let SpotifyClientID = "b225811b88cf4fee81a761a91aa0ad6e"
+    static let ClientSecret = "e66548f26ad6452481e5a8ad0f42571d"
+    
     static let redirectURI =  "spotify-analyzer://spotify-login-callback" // URL(string: "spotify-analyzer://")
     static let sessionKey = "spotifySessionKey"
+    
+    
+    
 }
 
-struct AuthInfo {
+struct AuthInfo: Decodable {
+
+    static var accessToken: String?
+    static var refreshToken: String?
+
+}
+
+struct SessionInfo: Codable {
     
-    static var token = "BQCUE_iexf15AcpRpfW5J48Kn0e66AYIcOb1oOiVtIjD4KPd4KOHrip0AcLCB-hACypfYCAmA9o4vWuVjrpa-lIprtv6bF7Boln-2moNJ7zM0rXu6ss1HaC9gUk0uMy1E2cmRSJJzhOD4WSpg43c-UAlNW2SviLmjfnpBEzwx7Hfu15POnOzog"
+    var status: Bool?
+    var accessToken: String?
+    var refreshToken: String?
     
+    init( status: Bool, accessToken: String, refreshToken: String) {
+        self.status = status
+        self.accessToken = accessToken
+        self.refreshToken = refreshToken
+    }
 }

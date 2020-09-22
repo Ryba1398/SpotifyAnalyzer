@@ -16,15 +16,21 @@ final class PlaylistStore: NSObject{
       
       override init() {
         super.init()
-        //self.loadItemsFromCache()
+        
+        print("Download")
+        
+        self.loadItemsFromCache()
       }
       
       func refreshItems(_ completion:@escaping (_ didLoadNewItems:Bool) -> ()) {
+        
+        print("refresh")
+        
         PlaylistLoader.loadFeed { items in
-            
+
           let didLoadNewItems = items.count > self.items.count
           self.items = items
-         // self.saveItemsToCache()
+            self.saveItemsToCache()
           completion(didLoadNewItems)
         }
       }
@@ -34,18 +40,29 @@ final class PlaylistStore: NSObject{
     extension PlaylistStore {
         
       func saveItemsToCache() {
-        NSKeyedArchiver.archiveRootObject(items, toFile: itemsCachePath)
-      }
+        
+        print("SAVE")
+        
+         UserDefaults.standard.set(try? PropertyListEncoder().encode(items), forKey: "playlists")
+        
+    }
       
       func loadItemsFromCache() {
-        if let cachedItems = NSKeyedUnarchiver.unarchiveObject(withFile: itemsCachePath) as? [Item] {
-          items = cachedItems
+    
+        
+        
+        if let data = UserDefaults.standard.object(forKey: "playlists") as? Data {
+            let auth = try? PropertyListDecoder().decode([Item].self, from: data)
+            
+            items = auth!
         }
+        
       }
       
-      var itemsCachePath: String {
+      var itemsCachePath: URL {
         let documentsURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
         let fileURL = documentsURL.appendingPathComponent("playlists")
-        return fileURL.path
+        return fileURL
       }
 }
+

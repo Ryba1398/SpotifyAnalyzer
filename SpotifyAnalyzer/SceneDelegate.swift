@@ -16,24 +16,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
-         print("SceneDelegate")
-        
-        
-        
-        
-        
-        // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
-        // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
-        // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
           guard let windowScene = (scene as? UIWindowScene) else { return }
         
-          window = UIWindow(frame: windowScene.coordinateSpace.bounds)
-          window?.windowScene = windowScene
-          window?.rootViewController = ViewController()
-          window?.makeKeyAndVisible()
+
+         
+        if((CurrentSessionManager.Load()?.status) != nil ){  //
+            
+            CurrentSessionManager.refreshToken(refreshToken: AuthInfo.refreshToken!) { refreshedTokens in
+            
+                self.window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+                self.window?.windowScene = windowScene
+                self.window?.rootViewController = PlaylistsTableViewController()
+                self.window?.makeKeyAndVisible()
+            }
+        }else{
+            window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+            window?.windowScene = windowScene
+            window?.rootViewController = ViewController()
+            window?.makeKeyAndVisible()
+        }
+        
+
+        
     }
-    
-    
+
     
      func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
 
@@ -54,18 +60,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     func sceneDidBecomeActive(_ scene: UIScene) {
 
-        if let _ = AuthorizationClass.auth.appRemote.connectionParameters.accessToken {
-            AuthorizationClass.auth.appRemote.connect()
-        }
     }
 
     func sceneWillResignActive(_ scene: UIScene) {
-        if (AuthorizationClass.auth.appRemote.isConnected) {
-            
-            print("disconnect")
-            
-            AuthorizationClass.auth.appRemote.disconnect()
-        }
+
     }
 
     func sceneWillEnterForeground(_ scene: UIScene) {
@@ -78,17 +76,5 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-
-    
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-       
-        
-        print("YVKOBEOBEE")
-        
-        return true
-    }
-
-
-
 }
 

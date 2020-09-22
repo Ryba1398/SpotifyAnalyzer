@@ -9,14 +9,40 @@
 import UIKit
 import Then
 import TinyConstraints
+import Alamofire
+import WebKit
 
 class ViewController: UIViewController {
 
+    let loginTextField = UITextField().then{
+        
+        $0.backgroundColor = .white
+        
+//        $0.backgroundColor = UIColor(red: 65/255, green: 65/255, blue: 65/255, alpha: 1.0 )
+        $0.placeholder = "Имя пользователя"
+        
+//        let placeholderText = NSAttributedString(string: "Имя пользователя",attributes: [NSAttributedString.Key.foregroundColor: UIColor(red: 192/255, green: 192/255, blue: 192/255, alpha: 1.0)])
+        
+        //$0.attributedPlaceholder = placeholderText
+        
+    }
+    
+    let passwordTextField = UITextField().then{
+        $0.backgroundColor = UIColor(red: 65/255, green: 65/255, blue: 65/255, alpha: 1.0 )
+        $0.placeholder = "Пароль"
+        
+    }
+    
+    
     let authButton = UIButton().then{
         $0.backgroundColor = UIColor(red: 36/255, green: 212/255, blue: 78/212, alpha: 1.0)
         $0.setTitleColor(.white, for: .normal)
-        $0.setTitle("Login", for: .normal)
+        $0.setTitle("Войти через приложение Spotify", for: .normal)
     }
+    
+    
+    
+    
     
     
     
@@ -24,38 +50,88 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         NotificationCenter.default.addObserver(self, selector: #selector(passToNextViewController), name: NSNotification.Name(rawValue: "GotTheToken"), object: nil)
+
+        self.view.backgroundColor = UIColor(red: 18/255, green: 18/255, blue: 18/255, alpha: 1.0)
         
-        self.view.addSubview(self.authButton)
+        self.view.addSubview(loginTextField)
         
-        authButton.center(in: self.view)
-        authButton.width(200)
+        loginTextField.center(in: self.view, offset: CGPoint(x: 0, y: -100))
+        loginTextField.width(300)
+        loginTextField.height(50)
+        loginTextField.layer.cornerRadius = 5
+        
+        
+        self.view.addSubview(passwordTextField)
+        
+        passwordTextField.center(in: self.view)
+        passwordTextField.width(300)
+        passwordTextField.height(50)
+        passwordTextField.layer.cornerRadius = 5
+        
+        
+        self.view.addSubview(authButton)
+        
+        authButton.center(in: self.view, offset: CGPoint(x: 0, y: 100))
+        authButton.width(300)
         authButton.height(50)
         authButton.layer.cornerRadius = 20
         
         authButton.addTarget(self, action: #selector(Authorize), for: .touchUpInside)
 
     }
-
-    var checkTokenGetting : Bool?
     
     @objc func Authorize(_ sender: UIButton) {
-        checkTokenGetting = true
-        AuthorizationClass.auth.didTapConnect()
+        //AuthorizationClass.auth.didTapConnect()
+        
+//        print("weewfwef")
+//        
+//        request("https://accounts.spotify.com/authorize?client_id=5fe01282e44241328a84e7c5cc169165&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&scope=user-read-private%20user-read-email&state=34fFs29kd09").responseString { response in
+        
+        
+        
+        request("https://accounts.spotify.com/authorize",
+                method: .get,
+                parameters: ["client_id": "b225811b88cf4fee81a761a91aa0ad6e", "response_type": "code", "redirect_uri": "spotify-analyzer://spotify-login-callback", "state": "34fFs29kd09"]).responseString { response in
+                    
+                    
+            do {
+                let html = response.result.value!
+                
+                DispatchQueue.main.async {
+                        
+                        let pvc = WebAuthViewController()
+                        
+                        let vc = UINavigationController(rootViewController: pvc)
+            
+                            pvc.presentHtmlPage(html: html)
+//
+                        self.present(vc, animated: true, completion: nil)
+                }
+                
+                
+            
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+        
+        
+        
+        
+        
         
     }
+    
     
     @objc func passToNextViewController(){
-        if(checkTokenGetting!){
             
-            let pvc = PlaylistsTableViewController()
-        
-            let vc = UINavigationController(rootViewController: pvc)
-            vc.modalPresentationStyle = .overFullScreen
-            present(vc, animated: true, completion: nil)
-            
-            checkTokenGetting = false
+            DispatchQueue.main.async {
+                
+                let pvc = PlaylistsTableViewController()
+                
+                let vc = UINavigationController(rootViewController: pvc)
+                vc.modalPresentationStyle = .overFullScreen
+                self.present(vc, animated: true, completion: nil)
         }
-
     }
-    
 }
