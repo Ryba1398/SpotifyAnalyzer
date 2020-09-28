@@ -19,8 +19,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
           guard let windowScene = (scene as? UIWindowScene) else { return }
         
 
+       
+        
          
         if((CurrentSessionManager.Load()?.status) != nil ){  //
+            
+             print(AuthInfo.accessToken)
             
             CurrentSessionManager.refreshToken(refreshToken: AuthInfo.refreshToken!) { refreshedTokens in
             

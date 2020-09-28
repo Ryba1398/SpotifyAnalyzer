@@ -65,7 +65,7 @@ struct Owner: Codable {
     let externalUrls: ExternalUrls
     let href: String
     let id, type, uri: String
-
+    
     enum CodingKeys: String, CodingKey {
         case displayName = "display_name"
         case externalUrls = "external_urls"

@@ -12,11 +12,13 @@ class PlaylistsTableViewController: UITableViewController {
 
     let playlistStore = PlaylistStore.sharedStore
     
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
         print("----------------------------------------------------------------")
         
+        navigationController?.navigationBar.barTintColor = UIColor(red: 18/255, green: 18/255, blue: 18/255, alpha: 1.0)
         
         //tableView.rowHeight = 100
         // tableView.estimatedRowHeight = 100
@@ -46,10 +48,6 @@ class PlaylistsTableViewController: UITableViewController {
         }
         
     }
-    
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .lightContent
-    }
 
     // MARK: - Table view data source
 
@@ -74,5 +72,31 @@ class PlaylistsTableViewController: UITableViewController {
         cell.initCell(playlist: playlistStore.items[indexPath.row])
         
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(playlistStore.items[indexPath.row].name)
+        
+
+        DispatchQueue.main.async {
+
+            let transition = CATransition()
+            transition.duration = 0.5
+            transition.type = CATransitionType.push
+            transition.subtype = CATransitionSubtype.fromRight
+            transition.timingFunction = CAMediaTimingFunction(name:CAMediaTimingFunctionName.easeInEaseOut)
+            self.view.window!.layer.add(transition, forKey: kCATransition)
+
+            
+            
+            let pvc = PlaylistInfoViewController()
+            pvc.setPlaylistInfo(playlist: self.playlistStore.items[indexPath.row])
+            let vc = UINavigationController(rootViewController: pvc)
+            
+           
+            
+            vc.modalPresentationStyle = .overFullScreen
+            self.present(vc, animated: false, completion: nil)
+        }
     }
 }

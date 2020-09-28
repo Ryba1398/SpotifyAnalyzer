@@ -23,6 +23,9 @@
 		E59B80FD250DF9B700E484E9 /* PlaylistStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59B80FC250DF9B700E484E9 /* PlaylistStore.swift */; };
 		E59B8101250E0D0C00E484E9 /* PlaylistsResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59B8100250E0D0C00E484E9 /* PlaylistsResponse.swift */; };
 		E59B8103250EA0A300E484E9 /* LoggingClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E59B8102250EA0A300E484E9 /* LoggingClass.swift */; };
+		E5D83D94251F59D1007D151B /* PlaylistInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5D83D93251F59D1007D151B /* PlaylistInfoViewController.swift */; };
+		E5D83D96251F89A7007D151B /* PlaylistInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5D83D95251F89A7007D151B /* PlaylistInfo.swift */; };
+		E5D83D982521D5D9007D151B /* PlaylistAnalyzer.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5D83D972521D5D9007D151B /* PlaylistAnalyzer.swift */; };
 		E5F3D88224ED0A1500AE5C55 /* AuthorizationClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F3D88124ED0A1500AE5C55 /* AuthorizationClass.swift */; };
 		E5F3D88624ED3BEE00AE5C55 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5F3D88524ED3BEE00AE5C55 /* SceneDelegate.swift */; };
 /* End PBXBuildFile section */
@@ -49,6 +52,9 @@
 		E59B80FC250DF9B700E484E9 /* PlaylistStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistStore.swift; sourceTree = "<group>"; };
 		E59B8100250E0D0C00E484E9 /* PlaylistsResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistsResponse.swift; sourceTree = "<group>"; };
 		E59B8102250EA0A300E484E9 /* LoggingClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoggingClass.swift; sourceTree = "<group>"; };
+		E5D83D93251F59D1007D151B /* PlaylistInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistInfoViewController.swift; sourceTree = "<group>"; };
+		E5D83D95251F89A7007D151B /* PlaylistInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistInfo.swift; sourceTree = "<group>"; };
+		E5D83D972521D5D9007D151B /* PlaylistAnalyzer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistAnalyzer.swift; sourceTree = "<group>"; };
 		E5F3D88124ED0A1500AE5C55 /* AuthorizationClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthorizationClass.swift; sourceTree = "<group>"; };
 		E5F3D88524ED3BEE00AE5C55 /* SceneDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -109,10 +115,13 @@
 				E597D1B724EA7643001045A0 /* AppDelegate.swift */,
 				E5F3D88124ED0A1500AE5C55 /* AuthorizationClass.swift */,
 				E539A9D82518A51300B577B8 /* CurrentSessionManager.swift */,
+				E5D83D93251F59D1007D151B /* PlaylistInfoViewController.swift */,
+				E5D83D972521D5D9007D151B /* PlaylistAnalyzer.swift */,
 				E597D1BB24EA7643001045A0 /* ViewController.swift */,
 				E539A9DA2518FA6B00B577B8 /* WebAuthViewController.swift */,
 				E5153ABE250CC53500C7E426 /* PlaylistLoader.swift */,
 				E5F3D88524ED3BEE00AE5C55 /* SceneDelegate.swift */,
+				E5D83D95251F89A7007D151B /* PlaylistInfo.swift */,
 				E58EB8AD24EC032300ACA2D1 /* ConstantInfo.swift */,
 				E59B8100250E0D0C00E484E9 /* PlaylistsResponse.swift */,
 				E539A9D62517F72000B577B8 /* RefreshTokenResponse.swift */,
@@ -224,6 +233,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E5D83D94251F59D1007D151B /* PlaylistInfoViewController.swift in Sources */,
 				E539A9D72517F72000B577B8 /* RefreshTokenResponse.swift in Sources */,
 				E59B8103250EA0A300E484E9 /* LoggingClass.swift in Sources */,
 				E5153ABF250CC53500C7E426 /* PlaylistLoader.swift in Sources */,
@@ -234,8 +244,10 @@
 				E539A9D92518A51300B577B8 /* CurrentSessionManager.swift in Sources */,
 				E59B8101250E0D0C00E484E9 /* PlaylistsResponse.swift in Sources */,
 				E59B80FB250D167600E484E9 /* PlaylistTableViewCell.swift in Sources */,
+				E5D83D96251F89A7007D151B /* PlaylistInfo.swift in Sources */,
 				E597D1BC24EA7643001045A0 /* ViewController.swift in Sources */,
 				E5F3D88224ED0A1500AE5C55 /* AuthorizationClass.swift in Sources */,
+				E5D83D982521D5D9007D151B /* PlaylistAnalyzer.swift in Sources */,
 				E597D1B824EA7643001045A0 /* AppDelegate.swift in Sources */,
 				E58EB8AE24EC032300ACA2D1 /* ConstantInfo.swift in Sources */,
 			);

@@ -14,37 +14,11 @@ import WebKit
 
 class ViewController: UIViewController {
 
-    let loginTextField = UITextField().then{
-        
-        $0.backgroundColor = .white
-        
-//        $0.backgroundColor = UIColor(red: 65/255, green: 65/255, blue: 65/255, alpha: 1.0 )
-        $0.placeholder = "Имя пользователя"
-        
-//        let placeholderText = NSAttributedString(string: "Имя пользователя",attributes: [NSAttributedString.Key.foregroundColor: UIColor(red: 192/255, green: 192/255, blue: 192/255, alpha: 1.0)])
-        
-        //$0.attributedPlaceholder = placeholderText
-        
-    }
-    
-    let passwordTextField = UITextField().then{
-        $0.backgroundColor = UIColor(red: 65/255, green: 65/255, blue: 65/255, alpha: 1.0 )
-        $0.placeholder = "Пароль"
-        
-    }
-    
-    
     let authButton = UIButton().then{
         $0.backgroundColor = UIColor(red: 36/255, green: 212/255, blue: 78/212, alpha: 1.0)
         $0.setTitleColor(.white, for: .normal)
         $0.setTitle("Войти через приложение Spotify", for: .normal)
     }
-    
-    
-    
-    
-    
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -52,22 +26,6 @@ class ViewController: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(passToNextViewController), name: NSNotification.Name(rawValue: "GotTheToken"), object: nil)
 
         self.view.backgroundColor = UIColor(red: 18/255, green: 18/255, blue: 18/255, alpha: 1.0)
-        
-        self.view.addSubview(loginTextField)
-        
-        loginTextField.center(in: self.view, offset: CGPoint(x: 0, y: -100))
-        loginTextField.width(300)
-        loginTextField.height(50)
-        loginTextField.layer.cornerRadius = 5
-        
-        
-        self.view.addSubview(passwordTextField)
-        
-        passwordTextField.center(in: self.view)
-        passwordTextField.width(300)
-        passwordTextField.height(50)
-        passwordTextField.layer.cornerRadius = 5
-        
         
         self.view.addSubview(authButton)
         
@@ -81,45 +39,43 @@ class ViewController: UIViewController {
     }
     
     @objc func Authorize(_ sender: UIButton) {
-        //AuthorizationClass.auth.didTapConnect()
+        AuthorizationClass.auth.didTapConnect()
         
 //        print("weewfwef")
 //        
 //        request("https://accounts.spotify.com/authorize?client_id=5fe01282e44241328a84e7c5cc169165&response_type=code&redirect_uri=https%3A%2F%2Fexample.com%2Fcallback&scope=user-read-private%20user-read-email&state=34fFs29kd09").responseString { response in
         
+//        request("https://accounts.spotify.com/authorize?response_type=code&client_id=b225811b88cf4fee81a761a91aa0ad6e&redirect_uri=http%3A%2F%2Flocalhost&scope=user-follow-modify&state=e21392da45dbf4&code_challenge=KADwyz1X~HIdcAG20lnXitK6k51xBP4pEMEZHmCneHD1JhrcHjE1P3yU_NjhBz4TdhV6acGo16PCd10xLwMJJ4uCutQZHw&code_challenge_method=S256").responseString { response in
         
         
-        request("https://accounts.spotify.com/authorize",
-                method: .get,
-                parameters: ["client_id": "b225811b88cf4fee81a761a91aa0ad6e", "response_type": "code", "redirect_uri": "spotify-analyzer://spotify-login-callback", "state": "34fFs29kd09"]).responseString { response in
-                    
-                    
-            do {
-                let html = response.result.value!
-                
-                DispatchQueue.main.async {
-                        
-                        let pvc = WebAuthViewController()
-                        
-                        let vc = UINavigationController(rootViewController: pvc)
-            
-                            pvc.presentHtmlPage(html: html)
+        
+        
+//        request("https://accounts.spotify.com/authorize",
+//                method: .get,
+//                parameters: ["client_id": "b225811b88cf4fee81a761a91aa0ad6e", "response_type": "code", "redirect_uri": "spotify-analyzer://spotify-login-callback"]).responseString { response in
 //
-                        self.present(vc, animated: true, completion: nil)
-                }
-                
-                
-            
-            } catch {
-                print(error.localizedDescription)
-            }
-        }
-        
-        
-        
-        
-        
-        
+//
+//            do {
+//                let html = response.result.value!
+//
+//                DispatchQueue.main.async {
+//
+//                        let pvc = WebAuthViewController()
+//
+//                        let vc = UINavigationController(rootViewController: pvc)
+//
+//                            pvc.presentHtmlPage(html: html)
+////
+//                        self.present(vc, animated: true, completion: nil)
+//                }
+//
+//
+//
+//            } catch {
+//                print(error.localizedDescription)
+//            }
+//        }
+
     }
     
     

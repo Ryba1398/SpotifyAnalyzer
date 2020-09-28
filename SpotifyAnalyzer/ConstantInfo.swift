@@ -38,3 +38,24 @@ struct SessionInfo: Codable {
         self.refreshToken = refreshToken
     }
 }
+
+
+//extension URL {
+//    static var recommendations: URL {
+//        makeForEndpoint("recommendations")
+//    }
+//
+//    static func article(withID id: Article.ID) -> URL {
+//        makeForEndpoint("articles/\(id)")
+//    }
+//}
+//
+//private extension URL {
+//    static func makeForEndpoint(_ endpoint: String) -> URL {
+//        URL(string: "https://api.myapp.com/\(endpoint)")!
+//    }
+//}
+
+//"https://api.spotify.com/v1/me/playlists"
+
+//"https://accounts.spotify.com/api/token"

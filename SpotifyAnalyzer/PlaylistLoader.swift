@@ -12,8 +12,6 @@ import Alamofire
 
 class PlaylistLoader {
     
-    
-
     static let FeedURL = "https://api.spotify.com/v1/me/playlists"
 
     static func loadFeed(_ completion: @escaping ([Item]) -> ()) {
@@ -33,6 +31,7 @@ class PlaylistLoader {
                 let otvet = try JSONDecoder().decode(Playlists.self, from: jsonData)
                 
                 print("before")
+                
                 
                 for item in otvet.items{
                     print(item.name)
