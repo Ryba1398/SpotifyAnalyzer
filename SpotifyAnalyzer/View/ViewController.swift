@@ -24,7 +24,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         
         NotificationCenter.default.addObserver(self, selector: #selector(passToNextViewController), name: NSNotification.Name(rawValue: "GotTheToken"), object: nil)
-
+        
         self.view.backgroundColor = UIColor(red: 18/255, green: 18/255, blue: 18/255, alpha: 1.0)
         
         self.view.addSubview(authButton)
@@ -86,6 +86,7 @@ class ViewController: UIViewController {
                 let pvc = PlaylistsTableViewController()
                 
                 let vc = UINavigationController(rootViewController: pvc)
+
                 vc.modalPresentationStyle = .overFullScreen
                 self.present(vc, animated: true, completion: nil)
         }

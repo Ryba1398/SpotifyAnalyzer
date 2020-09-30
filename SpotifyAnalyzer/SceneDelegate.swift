@@ -18,10 +18,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
           guard let windowScene = (scene as? UIWindowScene) else { return }
         
-
-       
-        
-         
         if((CurrentSessionManager.Load()?.status) != nil ){  //
             
              print(AuthInfo.accessToken)
@@ -30,7 +26,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             
                 self.window = UIWindow(frame: windowScene.coordinateSpace.bounds)
                 self.window?.windowScene = windowScene
-                self.window?.rootViewController = PlaylistsTableViewController()
+                            
+                let vc = UINavigationController(rootViewController:  PlaylistsTableViewController())
+                
+                self.window?.rootViewController = vc
                 self.window?.makeKeyAndVisible()
             }
         }else{
