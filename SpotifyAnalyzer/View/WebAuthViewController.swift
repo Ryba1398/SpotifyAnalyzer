@@ -11,7 +11,7 @@ import Then
 import TinyConstraints
 import WebKit
 
-class WebAuthViewController: UIViewController, WKUIDelegate {
+class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegate  {
 
     let webView2 = WKWebView()
     
@@ -26,88 +26,86 @@ class WebAuthViewController: UIViewController, WKUIDelegate {
         self.view.addSubview(webView2)
         self.view.addSubview(tabBar)
         
-        
+        webView2.navigationDelegate = self
         webView2.edgesToSuperview()
     }
     
     func presentHtmlPage(html: String) {
+            
+        //scope=\(SPTAuthStreamingScope)%20\(SPTAuthPlaylistReadPrivateScope)%20\(SPTAuthPlaylistModifyPublicScope)%20\(SPTAuthPlaylistModifyPrivateScope)
         
-        print(html)
-    
+        let url = "https://accounts.spotify.com/authorize?client_id=\(ConstantInfo.SpotifyClientID)&redirect_uri=\(ConstantInfo.redirectURI)&nosignup=true&nolinks=true&show_dialog=true&response_type=code"
         
-        webView2.loadHTMLString(html, baseURL: URL(string: "http://accounts.spotify.com"))
+        let request = NSURLRequest(url: NSURL(string: url)! as URL)
+        
+        webView2.load(request as URLRequest)
+        
         
     }
     
-    func webView(webView: WKWebView, createWebViewWithConfiguration configuration: WKWebViewConfiguration, forNavigationAction navigationAction: WKNavigationAction, windowFeatures: WKWindowFeatures) -> WKWebView? {
-        // A nil targetFrame means a new window (from Apple's doc)
-        if (navigationAction.targetFrame == nil) {
-            // Let's create a new webview on the fly with the provided configuration,
-            // set us as the UI delegate and return the handle to the parent webview
+    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+        
+        let urlString = navigationAction.request.url?.absoluteString
+                
+        processAuthResponse(urlString: urlString!)
+    
+        decisionHandler(.allow)
+    }
+    
+    private func processAuthResponse(urlString: String){
+        if((urlString.hasPrefix(ConstantInfo.redirectURI))){
             
-            print("4s5dr6ft7yguionpm")
+            let code = getAuthCode(name: "code", fragment: urlString)
             
-            let popup = WKWebView(frame: self.view.frame, configuration: configuration)
-            popup.uiDelegate = self
-            self.view.addSubview(popup)
-            return popup
+            if code != nil{
+                print("Granted")
+                print(code!)
+                
+                CurrentSessionManager.authWithCode(code: code!) {
+                    self.dismiss(animated: true, completion: nil)
+                    NotificationCenter.default.post(name: NSNotification.Name(rawValue: "GotTheToken"), object: nil)
+                }
+                
+            }else{
+                print("Denied")
+                self.dismiss(animated: true, completion: nil)
+            }
         }
-        return nil;
     }
     
-    func webViewDidClose(webView: WKWebView) {
-        // Popup window is closed, we remove it
-        webView.removeFromSuperview()
+    func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
+           //print("didReceiveServerRedirectForProvisionalNavigation")
+    }
+
+    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+           //print("didCommitNavigation - content arriving?")
+    }
+
+    private func webView(webView: WKWebView, didFailNavigation navigation: WKNavigation!, withError error: NSError) {
+           //print("didFailNavigation")
+    }
+
+    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+        //print("didStartProvisionalNavigation \(String(describing: navigation))")
+        //print(webView.url)
+    }
+
+    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+           print("didFinishNavigation")
+           webView.evaluateJavaScript("document.documentElement.outerHTML.toString()",
+                                      completionHandler: { html, error in
+                                       //print(html)
+           })
     }
     
-//    func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-//        guard let u = self.webuser, let p = self.webp else {
-//            completionHandler(.cancelAuthenticationChallenge, nil)
-//            return
-//        }
-//
-//        let creds = URLCredential.init(user: u, password: p, persistence: .forSession)
-//        completionHandler(.useCredential, creds)
-//    }
-    
-    
-//    
-//    func webView(_ webView: WKWebView, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
-//        guard let hostname = webView.url?.host else {
-//            return
-//        }
-//
-//        let authenticationMethod = challenge.protectionSpace.authenticationMethod
-//        if authenticationMethod == NSURLAuthenticationMethodDefault || authenticationMethod == NSURLAuthenticationMethodHTTPBasic || authenticationMethod == NSURLAuthenticationMethodHTTPDigest {
-//            let av = UIAlertController(title: webView.title, message: String(format: "AUTH_CHALLENGE_REQUIRE_PASSWORD".localizedUppercase, hostname), preferredStyle: .alert)
-//            av.addTextField(configurationHandler: { (textField) in
-//                textField.placeholder = "USER_ID".localizedUppercase
-//            })
-//            av.addTextField(configurationHandler: { (textField) in
-//                textField.placeholder = "PASSWORD".localizedUppercase
-//                textField.isSecureTextEntry = true
-//            })
-//
-//            av.addAction(UIAlertAction(title: "BUTTON_OK".localizedUppercase, style: .default, handler: { (action) in
-//                guard let userId = av.textFields?.first?.text else{
-//                    return
-//                }
-//                guard let password = av.textFields?.last?.text else {
-//                    return
-//                }
-//                let credential = URLCredential(user: userId, password: password, persistence: .none)
-//                completionHandler(.useCredential,credential)
-//            }))
-//            av.addAction(UIAlertAction(title: "BUTTON_CANCEL".localizedUppercase, style: .cancel, handler: { _ in
-//                completionHandler(.cancelAuthenticationChallenge, nil);
-//            }))
-//            self.parent?.present(av, animated: true, completion: nil)
-//        }else if authenticationMethod == NSURLAuthenticationMethodServerTrust{
-//            // needs this handling on iOS 9
-//            completionHandler(.performDefaultHandling, nil);
-//        }else{
-//            completionHandler(.cancelAuthenticationChallenge, nil);
-//        }
-//    }
-    
+    private func getAuthCode(name: String, fragment: String) -> String? {
+        let responseString = String(fragment.dropFirst(ConstantInfo.redirectURI.count+2))
+        let pairs = responseString.components(separatedBy: "=")
+
+        if(pairs.first == name){
+            return pairs.last
+        }
+        
+        return nil
+    }
 }

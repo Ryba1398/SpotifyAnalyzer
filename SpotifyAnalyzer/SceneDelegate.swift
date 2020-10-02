@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             
              print(AuthInfo.accessToken)
             
-            CurrentSessionManager.refreshToken(refreshToken: AuthInfo.refreshToken!) { refreshedTokens in
+            CurrentSessionManager.refreshToken(refreshToken: AuthInfo.refreshToken!) {
             
                 self.window = UIWindow(frame: windowScene.coordinateSpace.bounds)
                 self.window?.windowScene = windowScene

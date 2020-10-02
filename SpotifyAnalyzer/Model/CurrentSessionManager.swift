@@ -14,6 +14,7 @@ class CurrentSessionManager  {
     
     
     
+    
     static func Save(info: NewAccessToken){
         AuthInfo.accessToken = info.accessToken
         AuthInfo.refreshToken = info.refreshToken
@@ -48,7 +49,7 @@ class CurrentSessionManager  {
         return nil
     }
     
-    static func refreshToken(refreshToken: String, _ completion: @escaping (NewAccessToken) -> ()){
+    static func refreshToken(refreshToken: String, _ completion: @escaping () -> ()){
         
         let user = ConstantInfo.SpotifyClientID
         let password = ConstantInfo.ClientSecret
@@ -67,11 +68,38 @@ class CurrentSessionManager  {
                 let jsonData = response.data!
                 let result = try JSONDecoder().decode(NewAccessToken.self, from: jsonData)
                 Save(info: result)
-                completion(result)
+                completion()
             } catch {
                 print(error.localizedDescription)
             }
         }
     }
+    
+    static func authWithCode(code: String, _ completion: @escaping () -> ()){
+        
+        let user = ConstantInfo.SpotifyClientID
+        let password = ConstantInfo.ClientSecret
+        
+        let credentialData = "\(user):\(password)".data(using: String.Encoding.utf8)!
+        let base64Credentials = credentialData.base64EncodedString(options: [])
+        
+        
+        request("https://accounts.spotify.com/api/token",
+                method: .post,
+                parameters: ["grant_type": "authorization_code", "code": code, "redirect_uri": ConstantInfo.redirectURI],
+                headers: ["Authorization": "Basic \(base64Credentials)"]).responseJSON { response in
+            do {
+                let jsonData = response.data!
+                let result = try JSONDecoder().decode(NewAccessToken.self, from: jsonData)
+                Save(info: result)
+                completion()
+            } catch {
+                print(error.localizedDescription)
+            }
+        }
+
+    }
+    
+    
     
 }

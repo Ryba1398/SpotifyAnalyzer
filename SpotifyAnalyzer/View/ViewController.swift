@@ -39,7 +39,7 @@ class ViewController: UIViewController {
     }
     
     @objc func Authorize(_ sender: UIButton) {
-        AuthorizationClass.auth.didTapConnect()
+        //AuthorizationClass.auth.didTapConnect()
         
 //        print("weewfwef")
 //        
@@ -47,6 +47,14 @@ class ViewController: UIViewController {
         
 //        request("https://accounts.spotify.com/authorize?response_type=code&client_id=b225811b88cf4fee81a761a91aa0ad6e&redirect_uri=http%3A%2F%2Flocalhost&scope=user-follow-modify&state=e21392da45dbf4&code_challenge=KADwyz1X~HIdcAG20lnXitK6k51xBP4pEMEZHmCneHD1JhrcHjE1P3yU_NjhBz4TdhV6acGo16PCd10xLwMJJ4uCutQZHw&code_challenge_method=S256").responseString { response in
         
+
+                                let pvc = WebAuthViewController()
+
+                                let vc = UINavigationController(rootViewController: pvc)
+
+                                pvc.presentHtmlPage(html: "")
+        //
+                                self.present(vc, animated: true, completion: nil)
         
         
         
@@ -56,6 +64,10 @@ class ViewController: UIViewController {
 //
 //
 //            do {
+//
+//
+//                print(response)
+//
 //                let html = response.result.value!
 //
 //                DispatchQueue.main.async {
