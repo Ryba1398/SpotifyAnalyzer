@@ -11,7 +11,7 @@ import Foundation
 struct NewAccessToken: Codable {
     let accessToken, tokenType: String
     let expiresIn: Int
-    let refreshToken, scope: String
+    let refreshToken, scope: String?
 
     enum CodingKeys: String, CodingKey {
         case accessToken = "access_token"

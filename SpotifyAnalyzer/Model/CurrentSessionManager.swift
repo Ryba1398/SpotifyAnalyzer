@@ -17,16 +17,32 @@ class CurrentSessionManager  {
     
     static func Save(info: NewAccessToken){
         AuthInfo.accessToken = info.accessToken
-        AuthInfo.refreshToken = info.refreshToken
+    
+        print(AuthInfo.accessToken)
+        print(AuthInfo.refreshToken)
         
-        let sessionInfo = SessionInfo(status: true, accessToken: info.accessToken, refreshToken: info.refreshToken)
-        SaveData(session: sessionInfo)
+        if(info.refreshToken != nil){
+            AuthInfo.refreshToken = info.refreshToken
+            let sessionInfo = SessionInfo(status: true, accessToken: info.accessToken, refreshToken: info.refreshToken!)
+             SaveData(session: sessionInfo)
+        }else{
+            let sessionInfo = SessionInfo(status: true, accessToken: info.accessToken, refreshToken: AuthInfo.refreshToken!)
+            SaveData(session: sessionInfo)
+        }
+        
+        
+       
+       
     }
     
 
     static func Save(info: SPTSession){
         AuthInfo.accessToken = info.accessToken
         AuthInfo.refreshToken = info.refreshToken
+        
+        print(AuthInfo.accessToken)
+        print(AuthInfo.refreshToken)
+        
         
         let sessionInfo = SessionInfo(status: true, accessToken: info.accessToken, refreshToken: info.refreshToken)
         SaveData(session: sessionInfo)

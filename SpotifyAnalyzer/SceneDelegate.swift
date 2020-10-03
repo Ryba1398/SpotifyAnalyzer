@@ -21,6 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         if((CurrentSessionManager.Load()?.status) != nil ){  //
             
              print(AuthInfo.accessToken)
+            print(AuthInfo.refreshToken)
             
             CurrentSessionManager.refreshToken(refreshToken: AuthInfo.refreshToken!) {
             
