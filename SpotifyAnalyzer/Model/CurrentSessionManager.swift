@@ -10,39 +10,19 @@ import Foundation
 import Alamofire
 
 class CurrentSessionManager  {
-    
-    
-    
-    
-    
+
     static func Save(info: NewAccessToken){
         AuthInfo.accessToken = info.accessToken
-    
-        print(AuthInfo.accessToken)
-        print(AuthInfo.refreshToken)
-        
-        if(info.refreshToken != nil){
-            AuthInfo.refreshToken = info.refreshToken
-            let sessionInfo = SessionInfo(status: true, accessToken: info.accessToken, refreshToken: info.refreshToken!)
-             SaveData(session: sessionInfo)
-        }else{
-            let sessionInfo = SessionInfo(status: true, accessToken: info.accessToken, refreshToken: AuthInfo.refreshToken!)
-            SaveData(session: sessionInfo)
-        }
-        
-        
-       
-       
+        AuthInfo.refreshToken = info.refreshToken
+
+        let sessionInfo = SessionInfo(status: true, accessToken: info.accessToken, refreshToken: info.refreshToken!)
+         SaveData(session: sessionInfo)
     }
     
 
     static func Save(info: SPTSession){
         AuthInfo.accessToken = info.accessToken
         AuthInfo.refreshToken = info.refreshToken
-        
-        print(AuthInfo.accessToken)
-        print(AuthInfo.refreshToken)
-        
         
         let sessionInfo = SessionInfo(status: true, accessToken: info.accessToken, refreshToken: info.refreshToken)
         SaveData(session: sessionInfo)
@@ -102,10 +82,13 @@ class CurrentSessionManager  {
         
         request("https://accounts.spotify.com/api/token",
                 method: .post,
-                parameters: ["grant_type": "authorization_code", "code": code, "redirect_uri": ConstantInfo.redirectURI],
+                parameters: ["grant_type": "authorization_code", "code": code, "redirect_uri": ConstantInfo.redirectURI, "code_verifier": WebAuthViewController.codeVerifier],
                 headers: ["Authorization": "Basic \(base64Credentials)"]).responseJSON { response in
             do {
                 let jsonData = response.data!
+                
+                print(response.description)
+                
                 let result = try JSONDecoder().decode(NewAccessToken.self, from: jsonData)
                 Save(info: result)
                 completion()

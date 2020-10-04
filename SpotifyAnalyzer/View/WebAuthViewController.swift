@@ -10,6 +10,7 @@ import UIKit
 import Then
 import TinyConstraints
 import WebKit
+import CommonCrypto
 
 class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegate  {
 
@@ -30,11 +31,42 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         webView2.edgesToSuperview()
     }
     
+    static var codeVerifier = ""
+    
     func presentHtmlPage(html: String) {
-            
+        
+        
+        var buffer = [UInt8](repeating: 0, count: 64)
+        _ = SecRandomCopyBytes(kSecRandomDefault, buffer.count, &buffer)
+        WebAuthViewController.codeVerifier = Data(bytes: buffer).base64EncodedString()
+                                              .replacingOccurrences(of: "+", with: "-")
+                                              .replacingOccurrences(of: "/", with: "-")
+                                              .replacingOccurrences(of: "=", with: "-")
+                                              .trimmingCharacters(in: .whitespaces)
+        
+        
+        
+        let codeVerifierBytes = WebAuthViewController.codeVerifier.data(using: .ascii)!
+        var onebuffer = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        codeVerifierBytes.withUnsafeBytes {
+          _ = CC_SHA256($0, CC_LONG(codeVerifierBytes.count), &onebuffer)
+        }
+        let codeChallengeBytes = Data(bytes: onebuffer)
+        let codeChallenge = codeChallengeBytes.base64EncodedString()
+                                              .replacingOccurrences(of: "+", with: "-")
+                                              .replacingOccurrences(of: "/", with: "_")
+                                              .replacingOccurrences(of: "=", with: "")
+                                              .trimmingCharacters(in: .whitespaces)
+        
+        print(WebAuthViewController.codeVerifier)
+        
+        print("----------")
+        
+        print(codeChallenge)
+        
         //scope=\(SPTAuthStreamingScope)%20\(SPTAuthPlaylistReadPrivateScope)%20\(SPTAuthPlaylistModifyPublicScope)%20\(SPTAuthPlaylistModifyPrivateScope)
         
-        let url = "https://accounts.spotify.com/authorize?client_id=\(ConstantInfo.SpotifyClientID)&redirect_uri=\(ConstantInfo.redirectURI)&nosignup=true&nolinks=true&show_dialog=true&response_type=code"
+        let url = "https://accounts.spotify.com/authorize?client_id=\(ConstantInfo.SpotifyClientID)&code_challenge_method=S256&code_challenge=\(codeChallenge)&redirect_uri=\(ConstantInfo.redirectURI)&nosignup=true&nolinks=true&show_dialog=true&response_type=code"
         
         let request = NSURLRequest(url: NSURL(string: url)! as URL)
         
