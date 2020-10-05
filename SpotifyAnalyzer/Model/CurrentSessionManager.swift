@@ -71,7 +71,7 @@ class CurrentSessionManager  {
         }
     }
     
-    static func authWithCode(code: String, _ completion: @escaping () -> ()){
+    static func authWithCode(codeVerifier: String, code: String, _ completion: @escaping () -> ()){
         
         let user = ConstantInfo.SpotifyClientID
         let password = ConstantInfo.ClientSecret
@@ -82,7 +82,7 @@ class CurrentSessionManager  {
         
         request("https://accounts.spotify.com/api/token",
                 method: .post,
-                parameters: ["grant_type": "authorization_code", "code": code, "redirect_uri": ConstantInfo.redirectURI, "code_verifier": WebAuthViewController.codeVerifier],
+                parameters: ["grant_type": "authorization_code", "code": code, "redirect_uri": ConstantInfo.redirectURI, "code_verifier": codeVerifier],
                 headers: ["Authorization": "Basic \(base64Credentials)"]).responseJSON { response in
             do {
                 let jsonData = response.data!

@@ -39,12 +39,21 @@ class ViewController: UIViewController {
     }
     
     @objc func Authorize(_ sender: UIButton) {
-        //AuthorizationClass.auth.didTapConnect()
+        
         
         let pvc = WebAuthViewController()
         let vc = UINavigationController(rootViewController: pvc)
         pvc.presentHtmlPage(html: "")
         self.present(vc, animated: true, completion: nil)
+        
+//        if(UIApplication.shared.canOpenURL(NSURL(string:"spotify:")! as URL)){
+//            AuthorizationClass.auth.didTapConnect()
+//        }else{
+//            let pvc = WebAuthViewController()
+//            let vc = UINavigationController(rootViewController: pvc)
+//            pvc.presentHtmlPage(html: "")
+//            self.present(vc, animated: true, completion: nil)
+//        }
     }
     
     
