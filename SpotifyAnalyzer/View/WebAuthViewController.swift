@@ -11,8 +11,9 @@ import Then
 import TinyConstraints
 import WebKit
 import CommonCrypto
+import SafariServices
 
-class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegate  {
+class WebAuthViewController: UIViewController, SFSafariViewControllerDelegate{ //, WKUIDelegate, WKNavigationDelegate  {
     
     let webView2 = WKWebView()
     
@@ -33,8 +34,8 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         self.view.addSubview(webView2)
         self.view.addSubview(tabBar)
         
-        webView2.navigationDelegate = self
-        webView2.edgesToSuperview()
+//        webView2.navigationDelegate = self
+//        webView2.edgesToSuperview()
         
         let navigationBar = navigationController?.navigationBar
         
@@ -131,30 +132,44 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         
         urlWEB = URL(string: url)
         //
-        let request = NSURLRequest(url: NSURL(string: url)! as URL)
+        //let request = NSURLRequest(url: NSURL(string: url)! as URL)
         
-        webView2.load(request as URLRequest)
+        
+        if let url = URL(string: url) {
+            let vc = SFSafariViewController(url: url, entersReaderIfAvailable: true)
+            vc.delegate = self
+            
+            vc.modalPresentationStyle = .overCurrentContext
+            
+            present(vc, animated: true)
+        }
+        
+        //webView2.load(request as URLRequest)
         
     }
     
-    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-        
-        let url = navigationAction.request.url
-        
-        print("LOLKEKE")
-        
-        
-        progressView.progress = Float(webView2.estimatedProgress)
-        
-        
-        print(webView2.estimatedProgress)
-        
-        processAuthResponse(url: url!)
-        
-        
-        
-        decisionHandler(.allow)
+    func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
+        dismiss(animated: true)
     }
+    
+//    func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+//
+//        let url = navigationAction.request.url
+//
+//        print("LOLKEKE")
+//
+//
+//        progressView.progress = Float(webView2.estimatedProgress)
+//
+//
+//        print(webView2.estimatedProgress)
+//
+//        processAuthResponse(url: url!)
+//
+//
+//
+//        decisionHandler(.allow)
+//    }
     
     @objc public func openURL(_ notification: NSNotification){
         
@@ -195,29 +210,29 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         }
     }
     
-    func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
-        //print("didReceiveServerRedirectForProvisionalNavigation")
-    }
-    
-    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
-        //print("didCommitNavigation - content arriving?")
-    }
-    
-    private func webView(webView: WKWebView, didFailNavigation navigation: WKNavigation!, withError error: NSError) {
-        //print("didFailNavigation")
-    }
-    
-    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
-        //print("didStartProvisionalNavigation \(String(describing: navigation))")
-        //print(webView.url)
-    }
-    
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        print("didFinishNavigation")
-        webView.evaluateJavaScript("document.documentElement.outerHTML.toString()",
-                                   completionHandler: { html, error in
-        })
-    }
+//    func webView(_ webView: WKWebView, didReceiveServerRedirectForProvisionalNavigation navigation: WKNavigation!) {
+//        //print("didReceiveServerRedirectForProvisionalNavigation")
+//    }
+//
+//    func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {
+//        //print("didCommitNavigation - content arriving?")
+//    }
+//
+//    private func webView(webView: WKWebView, didFailNavigation navigation: WKNavigation!, withError error: NSError) {
+//        //print("didFailNavigation")
+//    }
+//
+//    func webView(_ webView: WKWebView, didStartProvisionalNavigation navigation: WKNavigation!) {
+//        //print("didStartProvisionalNavigation \(String(describing: navigation))")
+//        //print(webView.url)
+//    }
+//
+//    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+//        print("didFinishNavigation")
+//        webView.evaluateJavaScript("document.documentElement.outerHTML.toString()",
+//                                   completionHandler: { html, error in
+//        })
+//    }
     
     private func getAuthCode(fragment: String) -> [String: String] {
         let responseString = String(fragment.dropFirst(ConstantInfo.redirectURI.count+2))

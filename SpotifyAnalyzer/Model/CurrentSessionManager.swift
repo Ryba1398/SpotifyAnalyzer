@@ -85,12 +85,21 @@ class CurrentSessionManager  {
         let base64Credentials = credentialData.base64EncodedString(options: [])
         
         
+        let config = URLSessionConfiguration.default
+        //config.requestCachePolicy = .reloadIgnoringLocalAndRemoteCacheData
+        //config.urlCache = nil
+        //Create a manager with the non-caching configuration that you created above.
+        let manager = Alamofire.SessionManager(configuration: config)
+        
         request("https://accounts.spotify.com/api/token",
                 method: .post,
                 parameters: ["grant_type": "authorization_code", "code": code, "redirect_uri": ConstantInfo.redirectURI, "code_verifier": codeVerifier],
                 headers: ["Authorization": "Basic \(base64Credentials)"]).responseJSON { response in
+                    
             do {
                 let jsonData = response.data!
+                
+                 print("+++++++")
                 
                 print(response.description)
                 
@@ -98,6 +107,8 @@ class CurrentSessionManager  {
                 Save(info: result)
                 completion()
             } catch {
+                
+                print("------")
                 print(error.localizedDescription)
             }
         }

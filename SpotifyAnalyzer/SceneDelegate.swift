@@ -48,7 +48,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let data:[String: URL] = ["url": url]
         
-         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "processUrl"), object: nil, userInfo: data)
+        WebAuthentication.instance.processAuthResponse(url: url)
+        
+        //NotificationCenter.default.post(name: NSNotification.Name(rawValue: "processUrl"), object: nil, userInfo: data)
 
         
 //        AuthorizationClass.auth.sessionManager.application(UIApplication.shared, open: url, options: [:])
