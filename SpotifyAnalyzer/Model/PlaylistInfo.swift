@@ -120,7 +120,7 @@ enum Playlist{
         let isLocal: Bool
         let name: String
         let popularity: Int
-        let previewURL: String
+        let previewURL: String?
         let track: Bool
         let trackNumber: Int
         let type: TrackType

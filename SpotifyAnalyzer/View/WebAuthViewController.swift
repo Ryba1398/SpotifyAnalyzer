@@ -16,10 +16,17 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
     
     let webView2 = WKWebView()
     
+    //static let instance  = WebAuthViewController()
+    
+    let progressView = UIProgressView(progressViewStyle: .default)
+    
     let tabBar = UITabBar()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+
+        //webView2.addObserver(self, forKeyPath: #keyPath(WKWebView.estimatedProgress), options: .new, context: nil)
         
         self.view.backgroundColor = .white
         
@@ -28,13 +35,65 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
         
         webView2.navigationDelegate = self
         webView2.edgesToSuperview()
+        
+        let navigationBar = navigationController?.navigationBar
+        
+        navigationBar!.addSubview(progressView)
+        
+        NSLayoutConstraint.activate([
+            progressView.leadingAnchor.constraint(equalTo: navigationBar!.leadingAnchor),
+            progressView.trailingAnchor.constraint(equalTo: navigationBar!.trailingAnchor),
+
+            progressView.bottomAnchor.constraint(equalTo: navigationBar!.bottomAnchor),
+             progressView.heightAnchor.constraint(equalToConstant: 2.0)
+         ])
+        
+        progressView.width((navigationBar?.bounds.width)!)
+        
+        let button1 =  UIBarButtonItem(title: "Готово", style: .plain, target: self, action: #selector(dismissController))
+        self.navigationItem.leftBarButtonItem  = button1
+        
+        let button2 = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(share))
+        self.navigationItem.rightBarButtonItem  = button2
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(openURL), name: NSNotification.Name(rawValue: "processUrl"), object: nil)
+        
+        presentHtmlPage()
     }
+    
+    @objc func dismissController(){
+        //self.dismiss(animated: true, completion: nil)
+        
+        UIApplication.shared.open(urlWEB!)
+        
+    }
+    
+    override func observeValue(forKeyPath keyPath: String?, of object: Any?, change: [NSKeyValueChangeKey : Any]?, context: UnsafeMutableRawPointer?) {
+        if keyPath == "estimatedProgress" {
+            progressView.progress = Float(webView2.estimatedProgress)
+        }
+    }
+    
+    @objc func share(){
+
+        let items = [urlWEB]
+        
+        let activity = UIActivityViewController(
+          activityItems: items,
+          applicationActivities: nil
+        )
+        
+        
+        self.navigationController?.present(activity, animated: true, completion: nil)
+    }
+    
+    var urlWEB : URL?
     
     var codeVerifier = ""
     var codeChallenge = ""
     var state = ""
     
-    func presentHtmlPage(html: String) {
+    func presentHtmlPage() {
         
         
         var buffer = [UInt8](repeating: 0, count: 64)
@@ -60,32 +119,59 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
             .trimmingCharacters(in: .whitespaces)
         
         state = UUID().uuidString
-
-        let url = "https://accounts.spotify.com/authorize?client_id=\(ConstantInfo.SpotifyClientID)&state=\(state)&code_challenge_method=S256&code_challenge=\(codeChallenge)&redirect_uri=\(ConstantInfo.redirectURI)&nosignup=true&nolinks=true&show_dialog=true&response_type=code"
         
+        
+        print(codeVerifier)
+        
+        let url = "https://accounts.spotify.com/authorize?client_id=\(ConstantInfo.SpotifyClientID)&redirect_uri=\(ConstantInfo.redirectURI)&code_challenge_method=S256&code_challenge=\(codeChallenge)&state=\(state)&show_dialog=true&response_type=code"
+        
+        print(state)
+        
+        print(url)
+        
+        urlWEB = URL(string: url)
+        //
         let request = NSURLRequest(url: NSURL(string: url)! as URL)
         
         webView2.load(request as URLRequest)
-        
         
     }
     
     func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         
-        let urlString = navigationAction.request.url?.absoluteString
+        let url = navigationAction.request.url
         
-        processAuthResponse(urlString: urlString!)
+        print("LOLKEKE")
+        
+        
+        progressView.progress = Float(webView2.estimatedProgress)
+        
+        
+        print(webView2.estimatedProgress)
+        
+        processAuthResponse(url: url!)
+        
+        
         
         decisionHandler(.allow)
     }
     
-    private func processAuthResponse(urlString: String){
+    @objc public func openURL(_ notification: NSNotification){
+        
+        processAuthResponse(url: notification.userInfo!["url"] as! URL)
+        
+    }
+    
+    public func processAuthResponse(url: URL){
+        
+        let urlString = url.absoluteString
+        
         if((urlString.hasPrefix(ConstantInfo.redirectURI))){
             
             let result = getAuthCode(fragment: urlString)
-                        
+            
             if(result["state"] == state){
-             
+                
                 let code = result["code"]
                 
                 if code != nil{
@@ -101,6 +187,10 @@ class WebAuthViewController: UIViewController, WKUIDelegate, WKNavigationDelegat
                     print("Denied")
                     self.dismiss(animated: true, completion: nil)
                 }
+            }else{
+                print("this")
+               // AuthorizationClass.auth.sessionManager.application(UIApplication.shared, open: url, options: [:])
+                self.dismiss(animated: true, completion: nil)
             }
         }
     }

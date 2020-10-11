@@ -18,30 +18,22 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
           guard let windowScene = (scene as? UIWindowScene) else { return }
         
+         let vc = UINavigationController(rootViewController:  ViewController())
+        
         if((CurrentSessionManager.Load()?.status) != nil ){  //
             
              print(AuthInfo.accessToken)
             print(AuthInfo.refreshToken)
             
             CurrentSessionManager.refreshToken(refreshToken: AuthInfo.refreshToken!) {
-            
-                self.window = UIWindow(frame: windowScene.coordinateSpace.bounds)
-                self.window?.windowScene = windowScene
-                            
-                let vc = UINavigationController(rootViewController:  PlaylistsTableViewController())
-                
-                self.window?.rootViewController = vc
-                self.window?.makeKeyAndVisible()
+                vc.pushViewController(PlaylistsTableViewController(), animated: false)
             }
-        }else{
-            window = UIWindow(frame: windowScene.coordinateSpace.bounds)
-            window?.windowScene = windowScene
-            window?.rootViewController = ViewController()
-            window?.makeKeyAndVisible()
         }
         
-
-        
+        window = UIWindow(frame: windowScene.coordinateSpace.bounds)
+        window?.windowScene = windowScene
+        window?.rootViewController = vc
+        window?.makeKeyAndVisible()
     }
 
     
@@ -52,7 +44,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
              return
          }
         
-        AuthorizationClass.auth.sessionManager.application(UIApplication.shared, open: url, options: [:])
+        print(url)
+        
+        let data:[String: URL] = ["url": url]
+        
+         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "processUrl"), object: nil, userInfo: data)
+
+        
+//        AuthorizationClass.auth.sessionManager.application(UIApplication.shared, open: url, options: [:])
      }
 
     func sceneDidDisconnect(_ scene: UIScene) {

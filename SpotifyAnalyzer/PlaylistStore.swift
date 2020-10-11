@@ -17,6 +17,9 @@ final class PlaylistStore: NSObject{
     override init() {
         super.init()
         self.loadItemsFromCache()
+        
+        print(items.count)
+        
     }
     
     func refreshItems(_ completion:@escaping () -> ()) {

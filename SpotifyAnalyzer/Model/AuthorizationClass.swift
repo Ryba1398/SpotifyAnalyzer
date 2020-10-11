@@ -24,21 +24,34 @@ class AuthorizationClass: NSObject, SPTSessionManagerDelegate {
     
     func didTapConnect() {
         
-        let scope: SPTScope = [.playlistReadPrivate]
+        let scope: SPTScope = []
         
         if #available(iOS 11, *) {
             // Use this on iOS 11 and above to take advantage of SFAuthenticationSession
             sessionManager.initiateSession(with: scope, options: .clientOnly)
+            
+            let pkceProvider = sessionManager.value(forKey: "PKCEProvider")
+        
+             let codeVerifier = (pkceProvider as AnyObject).value(forKey: "codeVerifier") as? String
+            print(codeVerifier)
+            
         }
     }
     
     // MARK: - SPTSessionManagerDelegate
     
     func sessionManager(manager: SPTSessionManager, didFailWith error: Error) {
+        
+        print("--------------------------")
+        
+        print(error.localizedDescription)
+        
         print(error)
     }
     
     func sessionManager(manager: SPTSessionManager, didInitiate session: SPTSession) {
+        
+        print("success")
         
         CurrentSessionManager.Save(info: session)
         

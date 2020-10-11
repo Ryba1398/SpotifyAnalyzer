@@ -45,6 +45,11 @@ class CurrentSessionManager  {
         return nil
     }
     
+    static func LogOut(){
+        UserDefaults.standard.removeObject(forKey: "tokens")
+        UserDefaults.standard.removeObject(forKey: "playlists")
+    }
+    
     static func refreshToken(refreshToken: String, _ completion: @escaping () -> ()){
         
         let user = ConstantInfo.SpotifyClientID

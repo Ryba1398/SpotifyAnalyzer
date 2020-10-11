@@ -36,6 +36,14 @@ class ViewController: UIViewController {
         
         authButton.addTarget(self, action: #selector(Authorize), for: .touchUpInside)
         
+        
+        
+        //self.navigationController?.navigationBar.isHidden = true
+        
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
     @objc func Authorize(_ sender: UIButton) {
@@ -43,15 +51,16 @@ class ViewController: UIViewController {
         
         let pvc = WebAuthViewController()
         let vc = UINavigationController(rootViewController: pvc)
-        pvc.presentHtmlPage(html: "")
         self.present(vc, animated: true, completion: nil)
+
         
+//
+
 //        if(UIApplication.shared.canOpenURL(NSURL(string:"spotify:")! as URL)){
 //            AuthorizationClass.auth.didTapConnect()
 //        }else{
 //            let pvc = WebAuthViewController()
 //            let vc = UINavigationController(rootViewController: pvc)
-//            pvc.presentHtmlPage(html: "")
 //            self.present(vc, animated: true, completion: nil)
 //        }
     }
@@ -59,14 +68,13 @@ class ViewController: UIViewController {
     
     @objc func passToNextViewController(){
         
+        print("Change")
+        
         DispatchQueue.main.async {
             
             let pvc = PlaylistsTableViewController()
-            
-            let vc = UINavigationController(rootViewController: pvc)
-            
-            vc.modalPresentationStyle = .overFullScreen
-            self.present(vc, animated: true, completion: nil)
+            pvc.modalPresentationStyle = .overFullScreen
+            self.navigationController?.pushViewController(pvc, animated: true)
         }
     }
 }

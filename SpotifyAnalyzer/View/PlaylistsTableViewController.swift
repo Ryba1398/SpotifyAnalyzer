@@ -15,11 +15,28 @@ class PlaylistsTableViewController: UITableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-                
+        
+        print("LOAD VC")
+
+        let logoutBarButtonItem = UIBarButtonItem(title: "Logout", style: .done, target: self, action: #selector(logoutUser))
+        self.navigationItem.rightBarButtonItem  = logoutBarButtonItem
+        
+        self.navigationItem.hidesBackButton = true
+        
+        self.navigationController?.setNavigationBarHidden(false, animated: true)
+        
         configureTableViewController()
         configureRefreshControl()
         getTableItems()
 
+    }
+    
+    @objc func logoutUser(){
+        
+        CurrentSessionManager.LogOut()
+        navigationController?.popViewController(animated: true)
+        
+         print("clicked")
     }
     
     // MARK: - Table view data source
