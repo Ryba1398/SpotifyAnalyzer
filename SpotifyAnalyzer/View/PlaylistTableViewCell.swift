@@ -11,7 +11,7 @@ import Then
 import TinyConstraints
 import  Alamofire
 
-class PlaylistTableViewCell: UITableViewCell {
+class PlaylistTableViewCell: UITableViewCell{
 
     let playlistCoverImage = UIImageView().then {
         $0.image = UIImage(named: "emptyPlaylistCover.jpg")
