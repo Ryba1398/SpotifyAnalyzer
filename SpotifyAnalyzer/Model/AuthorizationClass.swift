@@ -40,6 +40,7 @@ class AuthorizationClass: NSObject, SPTSessionManagerDelegate {
     
     func sessionManager(manager: SPTSessionManager, didInitiate session: SPTSession) {
         CurrentSessionManager.Save(info: session)
-        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "GotTheToken"), object: nil)
+        let data : [String: Bool] = ["isGranted": true]
+        NotificationCenter.default.post(name: NSNotification.Name(rawValue: "GotTheToken"), object: nil, userInfo: data)
     }
 }

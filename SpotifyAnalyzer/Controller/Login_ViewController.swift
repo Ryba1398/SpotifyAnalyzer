@@ -7,15 +7,12 @@
 //
 
 import UIKit
-
-import Alamofire
-import WebKit
-import CommonCrypto
 import SafariServices
 
-class ViewController: UIViewController, SFSafariViewControllerDelegate {
+class LoginViewController: UIViewController, SFSafariViewControllerDelegate {
     
     var loginView : LoginView?
+    var safariViewController : SFSafariViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -30,51 +27,21 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
         self.navigationController?.setNavigationBarHidden(true, animated: true)
     }
     
-    
-     var vc : SFSafariViewController?
-    
     @objc func Authorize(_ sender: UIButton) {
-        
-        
-//        let pvc = WebAuthViewController()
-//        let vc = UINavigationController(rootViewController: pvc)
-//        self.present(vc, animated: true, completion: nil)
-
-       
-        
-//        
-        let urlString = WebAuthentication.instance.getURLString()
-
-
-        if let url = URL(string: urlString) {
-
-            let config = SFSafariViewController.Configuration()
-            config.barCollapsingEnabled = false
-
-            vc = SFSafariViewController(url: url, configuration: config)
-           // vc.delegate = self
-
-            vc!.delegate = self
-
-            vc!.modalPresentationStyle = .popover
-
-            //vc.delegate = self
-
-            self.present(vc!, animated: true, completion: nil)
+        if(UIApplication.shared.canOpenURL(NSURL(string:"spotfy:")! as URL)){
+            AuthorizationClass.auth.didTapConnect()
+        }else{
+            let urlString = WebAuthentication.instance.getURLString()
+            if let url = URL(string: urlString) {
+                let config = SFSafariViewController.Configuration()
+                config.barCollapsingEnabled = false
+                safariViewController = SFSafariViewController(url: url, configuration: config)
+                safariViewController!.delegate = self
+                safariViewController!.modalPresentationStyle = .popover
+                self.present(safariViewController!, animated: true, completion: nil)
+            }
         }
-        
-        
-//
-
-//        if(UIApplication.shared.canOpenURL(NSURL(string:"spotify:")! as URL)){
-//            AuthorizationClass.auth.didTapConnect()
-//        }else{
-//            let pvc = WebAuthViewController()
-//            let vc = UINavigationController(rootViewController: pvc)
-//            self.present(vc, animated: true, completion: nil)
-//        }
     }
-    
     
     @objc func passToNextViewController(_ notification: NSNotification){
         
@@ -82,29 +49,18 @@ class ViewController: UIViewController, SFSafariViewControllerDelegate {
         
         if(notification.userInfo != nil){
             let isGranted = notification.userInfo!["isGranted"] as! Bool
-        
-            
-            if(self.presentedViewController == vc){
-                vc!.dismiss(animated: true)
+
+            if(safariViewController != nil){
+                safariViewController!.dismiss(animated: true)
             }
-            
-            
+
             if(isGranted){
                 DispatchQueue.main.async {
-                    
                     let pvc = PlaylistsTableViewController()
                     pvc.modalPresentationStyle = .overFullScreen
                     self.navigationController?.pushViewController(pvc, animated: true)
                 }
             }
-            
-        }else{
-            DispatchQueue.main.async {
-                 
-                 let pvc = PlaylistsTableViewController()
-                 pvc.modalPresentationStyle = .overFullScreen
-                 self.navigationController?.pushViewController(pvc, animated: true)
-             }
         }
     }
     

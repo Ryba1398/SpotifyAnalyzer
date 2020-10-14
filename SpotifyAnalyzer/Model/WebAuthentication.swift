@@ -7,15 +7,15 @@
 //
 
 import Foundation
-import WebKit
 import CommonCrypto
 
 class WebAuthentication: NSObject {
     
     static var instance = WebAuthentication()
     
-    
-    
+    var codeVerifier = ""
+    var codeChallenge = ""
+    var state = ""
     
     public func processAuthResponse(url: URL){
         
@@ -33,57 +33,25 @@ class WebAuthentication: NSObject {
                 
                 if code != nil{
                     print("Granted")
-                    print(code!)
-                    
                     CurrentSessionManager.authWithCode(codeVerifier: codeVerifier, code: code!) {
-                        //self.dismiss(animated: true, completion: nil)
                         data["isGranted"] = true
                         NotificationCenter.default.post(name: NSNotification.Name(rawValue: "GotTheToken"), object: nil, userInfo: data)
-                    
                     }
                 }else{
                     print("Denied")
                     NotificationCenter.default.post(name: NSNotification.Name(rawValue: "GotTheToken"), object: nil, userInfo: data)
-                    //self.dismiss(animated: true, completion: nil)
                 }
             }else{
                 print("this")
                 AuthorizationClass.auth.sessionManager.application(UIApplication.shared, open: url, options: [:])
-                //self.dismiss(animated: true, completion: nil)
             }
         }
     }
     
-    
-    
-    var codeVerifier = ""
-    var codeChallenge = ""
-    var state = ""
-    
     func getURLString() -> String {
         
-        
-        var buffer = [UInt8](repeating: 0, count: 64)
-        _ = SecRandomCopyBytes(kSecRandomDefault, buffer.count, &buffer)
-        codeVerifier = Data(bytes: buffer).base64EncodedString()
-            .replacingOccurrences(of: "+", with: "-")
-            .replacingOccurrences(of: "/", with: "-")
-            .replacingOccurrences(of: "=", with: "-")
-            .trimmingCharacters(in: .whitespaces)
-        
-        
-        
-        let codeVerifierBytes = codeVerifier.data(using: .ascii)!
-        var onebuffer = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
-        codeVerifierBytes.withUnsafeBytes {
-            _ = CC_SHA256($0, CC_LONG(codeVerifierBytes.count), &onebuffer)
-        }
-        let codeChallengeBytes = Data(bytes: onebuffer)
-        codeChallenge = codeChallengeBytes.base64EncodedString()
-            .replacingOccurrences(of: "+", with: "-")
-            .replacingOccurrences(of: "/", with: "_")
-            .replacingOccurrences(of: "=", with: "")
-            .trimmingCharacters(in: .whitespaces)
+        codeVerifier = generateCodeVerifier()
+        codeChallenge = generateCodeBuffer(codeVerifier)
         
         state = UUID().uuidString
         
@@ -104,5 +72,38 @@ class WebAuthentication: NSObject {
             responseValues[item.first!] = item.last
         }
         return responseValues
+    }
+}
+
+extension WebAuthentication{
+    
+    fileprivate func generateCodeVerifier() -> String{
+        
+        var buffer = [UInt8](repeating: 0, count: 64)
+        _ = SecRandomCopyBytes(kSecRandomDefault, buffer.count, &buffer)
+        let codeVerifier = Data(buffer).base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "-")
+            .replacingOccurrences(of: "=", with: "-")
+            .trimmingCharacters(in: .whitespaces)
+        
+        return codeVerifier
+    }
+    
+    fileprivate func generateCodeBuffer(_ codeVerifier: String) -> String{
+        let codeVerifierBytes = codeVerifier.data(using: .ascii)!
+        var onebuffer = [UInt8](repeating: 0, count: Int(CC_SHA256_DIGEST_LENGTH))
+        codeVerifierBytes.withUnsafeBytes {
+            _ = CC_SHA256($0, CC_LONG(codeVerifierBytes.count), &onebuffer)
+        }
+        
+        let codeChallengeBytes = Data(onebuffer)
+        let codeChallenge = codeChallengeBytes.base64EncodedString()
+            .replacingOccurrences(of: "+", with: "-")
+            .replacingOccurrences(of: "/", with: "_")
+            .replacingOccurrences(of: "=", with: "")
+            .trimmingCharacters(in: .whitespaces)
+        
+        return codeChallenge
     }
 }
